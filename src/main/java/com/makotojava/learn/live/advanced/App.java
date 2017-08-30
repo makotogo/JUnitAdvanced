@@ -16,7 +16,7 @@ public class App {
    * @return - String - the string that was passed in.
    */
   public String doIt(String argument) {
-    return null;
+    return argument;
   }
 
   /**
@@ -28,6 +28,6 @@ public class App {
    * @return String - the name attribute.
    */
   public String doIt(Person person) {
-    return null;// person.getName();
+    return person.getName();
   }
 }

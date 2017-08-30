@@ -1,0 +1,94 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M5'
+  }
+}
+
+repositories {
+  mavenCentral()
+}
+
+ext.junit4Version        = '4.12'
+ext.junitVintageVersion  = '4.12.0-RC3'
+ext.junitPlatformVersion = '1.0.0-RC3'
+ext.junitJupiterVersion  = '5.0.0-RC3'
+ext.log4jVersion         = '1.2.17'
+ext.commonslang3Version  = '3.5'
+ext.springVersion        = '4.3.8.RELEASE'
+ext.derbyVersion         = '10.13.1.1'
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+jar {
+  baseName = 'HelloJUnit5'
+  version = '1.0-SNAPSHOT'
+}
+
+compileTestJava {
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+  options.compilerArgs += '-parameters'
+}
+
+junitPlatform {
+  platformVersion '1.0.0-RC3'
+  filters {
+    engines {
+      // include 'junit-jupiter', 'junit-vintage'
+      // exclude 'custom-engine'
+    }
+    tags {
+      // include 'fast'
+      exclude 'advanced'
+    }
+    // includeClassNamePattern '.*Test'
+  }
+  // enableStandardTestTask true
+  // reportsDir file('build/test-results/junit-platform') // this is the default
+  //logManager 'org.apache.logging.log4j.jul.LogManager'
+}
+
+dependencies {
+  // JUnit Jupiter API and TestEngine implementation
+  testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+  testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+  
+  testCompile("org.junit.platform:junit-platform-runner:${junitPlatformVersion}")
+
+  // If you also want to support JUnit 3 and JUnit 4 tests
+  testCompile("junit:junit:${junit4Version}")
+  testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
+  
+  // For running JUnit Jupiter parameterized tests
+  testCompile("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
+  
+  // Spring
+  compile("org.springframework:spring-context:${springVersion}")
+  compile("org.springframework:spring-jdbc:${springVersion}")
+  
+  // Derby
+  compile("org.apache.derby:derby:${derbyVersion}")
+  
+  // log4j
+  compile("log4j:log4j:${log4jVersion}")
+  
+  // Commons Lang 3
+  compile("org.apache.commons:commons-lang3:${commonslang3Version}")
+}
+
+task wrapper(type: Wrapper) {
+  description = 'Generates gradlew[.bat] scripts'
+  gradleVersion = '3.0'
+}
+
+task copyToLib(type: Copy) {
+  into "$buildDir/lib"
+  from configurations.runtime
+}
+
+build.dependsOn(copyToLib)
